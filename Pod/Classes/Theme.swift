@@ -43,6 +43,8 @@ open class Theme {
     
     /// Default background color for the current theme.
     open var themeBackgroundColor : RPColor!
+	
+	open var themeTextColor : RPColor!
     
     /**
      Initialize the theme with the given theme name.
@@ -52,34 +54,40 @@ open class Theme {
     init(themeString: String)
     {
         theme = themeString
-        setCodeFont(RPFont(name: "Courier", size: 14)!)
+        setCodeFont(NSFont.monospacedSystemFont(ofSize: 14, weight: .regular))
         strippedTheme = stripTheme(themeString)
         lightTheme = strippedThemeToString(strippedTheme)
         themeDict = strippedThemeToTheme(strippedTheme)
-        var bkgColorHex = strippedTheme[".hljs"]?["background"]
-        if(bkgColorHex == nil)
-        {
-            bkgColorHex = strippedTheme[".hljs"]?["background-color"]
+		
+		// this one has several backups
+		themeBackgroundColor = decode(strippedTheme, ".hljs", "background")
+		if (themeBackgroundColor == nil) {
+			themeBackgroundColor = decode(strippedTheme, ".hljs", "background-color")
         }
-        if let bkgColorHex = bkgColorHex
-        {
-            if(bkgColorHex == "white")
-            {
-                themeBackgroundColor = RPColor(white: 1, alpha: 1)
-            }else if(bkgColorHex == "black")
-            {
-                themeBackgroundColor = RPColor(white: 0, alpha: 1)
-            }else
-            {
-                let range = bkgColorHex.range(of: "#")
-                let str = String(bkgColorHex[(range?.lowerBound)!...])
-                themeBackgroundColor = colorWithHexString(str)
-            }
-        }else
-        {
-            themeBackgroundColor = RPColor.white
-        }
+		if (themeBackgroundColor == nil) {
+			themeBackgroundColor = RPColor.white
+		}
+		
+		themeTextColor = decode(strippedTheme, ".hljs", "color")
+		if (themeTextColor == nil) {
+			themeTextColor = RPColor.black
+		}
     }
+	
+	fileprivate func decode(_ strippedTheme: RPThemeStringDict, _ section: String, _ field: String) -> RPColor? {
+		guard let hex = strippedTheme[section]?[field] else {
+			return nil
+		}
+		
+		if(hex == "white") {
+			return RPColor(white: 1, alpha: 1)
+		} else if(hex == "black") {
+			return RPColor(white: 0, alpha: 1)
+		}
+		let range = hex.range(of: "#")
+		let str = String(hex[(range?.lowerBound)!...])
+		return colorWithHexString(str)
+	}
     
     /**
      Changes the theme font. This will try to automatically populate the codeFont, boldCodeFont and italicCodeFont properties based on the provided font.
