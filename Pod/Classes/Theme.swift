@@ -45,6 +45,8 @@ open class Theme {
     open var themeBackgroundColor : RPColor!
 	
 	open var themeTextColor : RPColor!
+	
+	open var themeCommentColor : RPColor!
     
     /**
      Initialize the theme with the given theme name.
@@ -71,6 +73,11 @@ open class Theme {
 		themeTextColor = decode(strippedTheme, ".hljs", "color")
 		if (themeTextColor == nil) {
 			themeTextColor = RPColor.black
+		}
+		
+		themeCommentColor = decode(strippedTheme, ".hljs-comment", "color")
+		if (themeCommentColor == nil) {
+			themeCommentColor = themeTextColor
 		}
     }
 	
