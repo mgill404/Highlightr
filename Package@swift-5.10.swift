@@ -27,6 +27,8 @@ let package = Package(
             ],
             resources: [
                 .copy("Assets/Highlighter/highlight.min.js"),
+				.copy("Assets/styles/differino-dark.min.css"),
+				.copy("Assets/styles/differino-light.min.css"),
                 .copy("Assets/styles/a11y-dark.min.css"),
                 .copy("Assets/styles/a11y-light.min.css"),
                 .copy("Assets/styles/agate.min.css"),

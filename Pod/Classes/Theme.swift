@@ -47,6 +47,12 @@ open class Theme {
 	open var themeTextColor : RPColor!
 	
 	open var themeCommentColor : RPColor!
+	
+	open var themeAdditionColor : RPColor!
+	
+	open var themeDeletionColor : RPColor!
+	
+	open var themeDiffBackgroundColor : RPColor!
     
     /**
      Initialize the theme with the given theme name.
@@ -78,6 +84,21 @@ open class Theme {
 		themeCommentColor = decode(strippedTheme, ".hljs-comment", "color")
 		if (themeCommentColor == nil) {
 			themeCommentColor = themeTextColor
+		}
+		
+		themeAdditionColor = decode(strippedTheme, ".hljs-addition", "color") ?? themeTextColor
+		if (themeAdditionColor == nil) {
+			themeAdditionColor = themeTextColor
+		}
+		
+		themeDeletionColor = decode(strippedTheme, ".hljs-deletion", "color") ?? themeTextColor
+		if (themeDeletionColor == nil) {
+			themeDeletionColor = themeTextColor
+		}
+		
+		themeDiffBackgroundColor = decode(strippedTheme, ".hljs-diff", "background") ?? themeTextColor
+		if (themeDeletionColor == nil) {
+			themeDeletionColor = themeBackgroundColor
 		}
     }
 	
