@@ -87,6 +87,7 @@ let package = Package(
                 .copy("Assets/styles/kimbie.light.min.css"),
                 .copy("Assets/styles/lightfair.min.css"),
                 .copy("Assets/styles/magula.min.css"),
+				.copy("Assets/styles/mergerino-dark.min.css"),
                 .copy("Assets/styles/mono-blue.min.css"),
                 .copy("Assets/styles/monokai-sublime.min.css"),
                 .copy("Assets/styles/monokai.min.css"),
