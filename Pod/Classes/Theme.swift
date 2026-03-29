@@ -61,7 +61,7 @@ open class Theme {
      
      - parameter themeString: Theme to use.
      */
-    init(themeString: String)
+    public init(themeString: String)
     {
         theme = themeString
         setCodeFont(NSFont.monospacedSystemFont(ofSize: 14, weight: .regular))
@@ -107,9 +107,9 @@ open class Theme {
 			themeDeletionColor = themeTextColor
 		}
 		
-		themeDiffBackgroundColor = decode(strippedTheme, ".hljs-diff", "background") ?? themeTextColor
-		if (themeDeletionColor == nil) {
-			themeDeletionColor = themeBackgroundColor
+		themeDiffBackgroundColor = decode(strippedTheme, ".hljs-diff", "background") ?? themeBackgroundColor
+		if (themeDiffBackgroundColor == nil) {
+			themeDiffBackgroundColor = themeBackgroundColor
 		}
     }
 	
@@ -231,8 +231,12 @@ open class Theme {
             return NSFont.monospacedSystemFont(ofSize: size, weight: .regular)
         case "system", "sans-serif":
             return NSFont.systemFont(ofSize: size)
+        case "sf mono":
+            if let desc = NSFont.systemFont(ofSize: size).fontDescriptor.withDesign(.monospaced) {
+                return NSFont(descriptor: desc, size: size)
+            }
+            return NSFont.monospacedSystemFont(ofSize: size, weight: .regular)
         default:
-            // Try as an exact font name, then as a family name
             return NSFont(name: family, size: size)
                 ?? NSFontManager.shared.font(withFamily: family, traits: [], weight: 5, size: size)
         }

@@ -33,7 +33,7 @@ open class Highlightr
 
     private let hljs: JSValue
 
-    private let bundle : Bundle
+    public let bundle : Bundle
     private let htmlStart = "<"
     private let spanStart = "span class=\""
     private let spanStartClose = "\">"
@@ -69,7 +69,7 @@ open class Highlightr
 
         self.hljs = hljs
         
-        guard setTheme(to: "pojoaque") else
+        guard setTheme(to: "mergerino-dark") else
         {
             return nil
         }
@@ -93,7 +93,14 @@ open class Highlightr
         let themeString = try! String.init(contentsOfFile: defTheme)
         theme =  Theme(themeString: themeString)
 
-        
+
+        return true
+    }
+
+    @discardableResult
+    open func setTheme(fromCSS themeString: String) -> Bool
+    {
+        theme = Theme(themeString: themeString)
         return true
     }
     
