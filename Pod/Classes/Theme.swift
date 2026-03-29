@@ -37,6 +37,8 @@ open class Theme {
     open var boldCodeFont : RPFont!
     /// Italic font to be used by this theme
     open var italicCodeFont : RPFont!
+    /// Font for line numbers, derived from codeFont at a smaller size
+    open var lineNumberFont : RPFont!
     
     private var themeDict : RPThemeDict!
     private var strippedTheme : RPThemeStringDict!
@@ -64,9 +66,18 @@ open class Theme {
         theme = themeString
         setCodeFont(NSFont.monospacedSystemFont(ofSize: 14, weight: .regular))
         strippedTheme = stripTheme(themeString)
+
+        // Apply font-family from CSS if present (font-size is managed by the app)
+        if let fontFamily = strippedTheme[".hljs"]?["font-family"] {
+            let size = codeFont.pointSize
+            if let font = resolveFont(family: fontFamily.trimmingCharacters(in: .whitespaces), size: size) {
+                setCodeFont(font)
+            }
+        }
+
         lightTheme = strippedThemeToString(strippedTheme)
         themeDict = strippedThemeToTheme(strippedTheme)
-		
+
 		// this one has several backups
 		themeBackgroundColor = decode(strippedTheme, ".hljs", "background")
 		if (themeBackgroundColor == nil) {
@@ -125,6 +136,7 @@ open class Theme {
     open func setCodeFont(_ font: RPFont)
     {
         codeFont = font
+        lineNumberFont = RPFont(descriptor: font.fontDescriptor, size: max(9, font.pointSize - 2))
         
         #if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
         let boldDescriptor = UIFontDescriptor(fontAttributes: [UIFontDescriptor.AttributeName.family:font.familyName,
@@ -204,6 +216,28 @@ open class Theme {
         return returnString
     }
     
+    private func parseFontSize(_ value: String?) -> CGFloat? {
+        guard let value = value?.trimmingCharacters(in: .whitespaces) else { return nil }
+        // Support "14px", "14pt", or plain "14"
+        let numeric = value.replacingOccurrences(of: "px", with: "")
+                          .replacingOccurrences(of: "pt", with: "")
+                          .trimmingCharacters(in: .whitespaces)
+        return Double(numeric).map { CGFloat($0) }
+    }
+
+    private func resolveFont(family: String, size: CGFloat) -> RPFont? {
+        switch family.lowercased() {
+        case "monospace", "mono":
+            return NSFont.monospacedSystemFont(ofSize: size, weight: .regular)
+        case "system", "sans-serif":
+            return NSFont.systemFont(ofSize: size)
+        default:
+            // Try as an exact font name, then as a family name
+            return NSFont(name: family, size: size)
+                ?? NSFontManager.shared.font(withFamily: family, traits: [], weight: 5, size: size)
+        }
+    }
+
     private func stripTheme(_ themeString : String) -> [String:[String:String]]
     {
         let objcString = (themeString as NSString)
