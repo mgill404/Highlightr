@@ -55,6 +55,8 @@ open class Theme {
 	open var themeDeletionColor : RPColor!
 	
 	open var themeDiffBackgroundColor : RPColor!
+
+	open var themeHighlightColor : RPColor!
     
     /**
      Initialize the theme with the given theme name.
@@ -110,6 +112,11 @@ open class Theme {
 		themeDiffBackgroundColor = decode(strippedTheme, ".hljs-diff", "background") ?? themeBackgroundColor
 		if (themeDiffBackgroundColor == nil) {
 			themeDiffBackgroundColor = themeBackgroundColor
+		}
+
+		themeHighlightColor = decode(strippedTheme, ".hljs-highlight", "color")
+		if (themeHighlightColor == nil) {
+			themeHighlightColor = RPColor(red: 0.42, green: 0.62, blue: 0.84, alpha: 1) // default blue
 		}
     }
 	
